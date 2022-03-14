@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # arguments
 ## location to output results
@@ -8,8 +8,8 @@ BPFDIR=$2
 
 # check that we are running as root... otherwise a bunch of the following steps
 # will fail...
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
+if [ "$EUID" -ne 0 ] ; then
+  echo "Please run as root"
   exit 1
 fi
 
@@ -47,7 +47,7 @@ date
 
 # collect a 1-minute long sample of (de)allocations
 echo "Recording BPF allocations"
-source scl_source enable devtoolset-7 llvm-toolset-7
+(uname -a | grep -q Ubuntu) || source scl_source enable devtoolset-7 llvm-toolset-7
 $BPFDIR/trace_allocs.py 1 > "$SAMPLEDIR/$RANDTIME.allocs"
 
 date
