@@ -61,7 +61,7 @@ static void do_trace(struct pt_regs *ctx, u8 flags, u64 order) {
     events.perf_submit(ctx, &data, sizeof(data));
 }
 
-void kprobe____alloc_pages(struct pt_regs *ctx, gfp_t gfp, unsigned int order) {
+void kprobe____alloc_pages_nodemask(struct pt_regs *ctx, gfp_t gfp, unsigned int order) {
     do_trace(ctx, ALLOC_PAGES, order);
 }
 
@@ -69,15 +69,15 @@ void kprobe____free_pages(struct pt_regs *ctx, struct page *page, unsigned int o
     do_trace(ctx, FREE_PAGES, order);
 }
 
-void syscall__mmap(struct pt_regs *ctx, void *addr, size_t length, int prot, int flags, int fd, off_t offset) {
+void kprobe__sys_mmap_pgoff(struct pt_regs *ctx, void *addr, size_t length, int prot, int flags, int fd, off_t offset) {
     do_trace(ctx, MMAP | (flags & MAP_ANONYMOUS ? ANON : 0), length >> 12);
 }
 
-void syscall__munmap(struct pt_regs *ctx, void *addr, size_t length) {
+void kprobe__do_munmap(struct pt_regs *ctx, void *addr, size_t length) {
     do_trace(ctx, MUNMAP, length >> 12);
 }
 
-void syscall__brk(struct pt_regs *ctx) {
+void kprobe__sys_brk(struct pt_regs *ctx) {
     // Hard to tell the length from the system call, unfortunately...
     do_trace(ctx, BRK | ANON, 0);
 }
@@ -153,7 +153,7 @@ def print_event(cpu, data, size):
 b["events"].open_perf_buffer(print_event)
 while 1:
     try:
-        b.perf_buffer_poll()
+        b.kprobe_poll()
         time.sleep(0.1)
     except KeyboardInterrupt:
         exit()
