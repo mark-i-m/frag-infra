@@ -88,9 +88,9 @@ if debug:
 
 # initialize BPF
 b = BPF(text=bpf_text)
-for sc in ["mmap", "munmap", "brk"]:
-    fnname = b.get_syscall_fnname(sc)
-    b.attach_kprobe(event=fnname, fn_name="syscall__%s" % sc)
+#for sc in ["mmap", "munmap", "brk"]:
+#    fnname = b.get_syscall_fnname(sc)
+#    b.attach_kprobe(event=fnname, fn_name="syscall__%s" % sc)
 
 TASK_COMM_LEN = 16  # linux/sched.h
 
