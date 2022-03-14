@@ -1,3 +1,9 @@
+
+# Running
+
+* `frag_cron_script.sh <OUTPUTDIR> <BPFDIR>`
+* `trace_allocs.py [DURATION MINUTES]`
+
 # Ubuntu 18.04, 20.04
 
 ## Dependencies
