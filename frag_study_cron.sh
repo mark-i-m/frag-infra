@@ -47,7 +47,6 @@ date
 
 # collect a 1-minute long sample of (de)allocations
 echo "Recording BPF allocations"
-(uname -a | grep -q Ubuntu) || source scl_source enable devtoolset-7 llvm-toolset-7
 $BPFDIR/trace_allocs.py 1 > "$SAMPLEDIR/$RANDTIME.allocs"
 
 date
