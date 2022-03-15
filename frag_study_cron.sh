@@ -43,6 +43,15 @@ date
 echo "Recording process table"
 ps -o rss=,vsz=,cputime=,etime=,comm= ax  | sort -n -k 1 -r > "$SAMPLEDIR/$RANDTIME.procs"
 
+# collect some system info
+echo "Record kernel version and hostname"
+hostname > "$SAMPLEDIR/$RANDTIME.info"
+uname -a >> "$SAMPLEDIR/$RANDTIME.info"
+
+# collect info about overall memory usage
+echo "Record /proc/meminfo"
+cat /proc/meminfo > "$SAMPLEDIR/$RANDTIME.meminfo"
+
 date
 
 # collect a 1-minute long sample of (de)allocations
