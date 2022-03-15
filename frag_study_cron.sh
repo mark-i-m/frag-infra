@@ -18,7 +18,7 @@ RANDMINUTE=$(( $RANDOM % 30 ))
 RANDTIME=$( date +"%m-%d-%Y-%H-%M-%S" -d "$RANDMINUTE mins" )
 
 # create the output directory
-SAMPLEDIR="$OUTPUTDIR/$RANDTIME/"
+SAMPLEDIR="$OUTPUTDIR/$HOSTNAME-$RANDTIME/"
 mkdir -p $SAMPLEDIR
 
 # redirect output to a log
