@@ -32,10 +32,8 @@ echo "Waking up again... <yawn>"
 date
 
 # sample /proc/kpageflags
-echo "Recording page flags"
-cp /proc/kpageflags "$SAMPLEDIR/$RANDTIME.kpageflags"
-echo "Compressing page flags sample"
-gzip "$SAMPLEDIR/$RANDTIME.kpageflags"
+echo "Recording and compressing page flags"
+cat /proc/kpageflags | gzip > "$SAMPLEDIR/$RANDTIME.kpageflags.gz"
 
 date
 
