@@ -53,8 +53,8 @@ cat /proc/meminfo > "$SAMPLEDIR/$RANDTIME.meminfo"
 
 date
 
-# collect a 1-minute long sample of (de)allocations
+# collect and compress a 1-minute long sample of (de)allocations
 echo "Recording BPF allocations"
-$BPFDIR/trace_allocs.py 1 > "$SAMPLEDIR/$RANDTIME.allocs"
+$BPFDIR/trace_allocs.py 1 | gzip > "$SAMPLEDIR/$RANDTIME.allocs.gz"
 
 date
