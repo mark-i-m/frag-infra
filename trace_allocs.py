@@ -150,7 +150,7 @@ def print_event(cpu, data, size):
 
     #print()
 
-b["events"].open_perf_buffer(print_event)
+b["events"].open_perf_buffer(print_event, page_cnt=32)
 while 1:
     try:
         b.kprobe_poll()
