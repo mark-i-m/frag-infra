@@ -45,7 +45,7 @@ ps -o rss=,vsz=,cputime=,etime=,comm= ax  | sort -n -k 1 -r > "$SAMPLEDIR/$RANDT
 echo "Record kernel version and hostname"
 hostname > "$SAMPLEDIR/$RANDTIME.info"
 uname -a >> "$SAMPLEDIR/$RANDTIME.info"
-dmidecode >> "$SAMPLEDIR/$RANDTIME.info"
+/usr/sbin/dmidecode >> "$SAMPLEDIR/$RANDTIME.info"
 
 # collect info about overall memory usage
 echo "Record /proc/meminfo"
