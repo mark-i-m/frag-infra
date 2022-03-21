@@ -134,14 +134,24 @@ def repr_flags(flags):
 
     return s
 
+buffered_events = []
+
 def print_event(cpu, data, size):
+    global buffered_events
+
     event = ct.cast(data, ct.POINTER(Data)).contents
+
+    buffered_events.append((event.comm.decode(), event.pid, cpu,
+        repr_flags(event.flags), event.order))
+
+    if len(buffered_events) % 10000 == 0:
+        for comm, pid, cpu, flags, order in buffered_events:
+            print("%-12.12s %-6d %-3d %s %lu" % (comm, pid, cpu, flags, order))
+        buffered_events = []
 
     #ts = time.time() - start_ts
     #print("%-18.9f %-12.12s %-6d %-3d %s %lu" %
     #      (ts, event.comm.decode(), event.pid, cpu, repr_flags(event.flags), event.order))
-    print("%-12.12s %-6d %-3d %s %lu" %
-          (event.comm.decode(), event.pid, cpu, repr_flags(event.flags), event.order))
 
     # uncomment to print stack traces
     #for addr in stack_traces.walk(event.stack_id):
@@ -150,14 +160,24 @@ def print_event(cpu, data, size):
 
     #print()
 
+def end():
+    global buffered_events
+
+    # print any unprinted buffered events
+    for comm, pid, cpu, flags, order in buffered_events:
+        print("%-12.12s %-6d %-3d %s %lu" % (comm, pid, cpu, flags, order))
+
+    # exit
+    print("Exiting after %d seconds." % (time.time() - START), file=sys.stderr)
+    exit()
+
 b["events"].open_perf_buffer(print_event, page_cnt=512)
 while 1:
     try:
         b.kprobe_poll()
         time.sleep(0.1)
     except KeyboardInterrupt:
-        exit()
+        end()
 
     if DURATION is not None and time.time() - START >= DURATION * 60.:
-        print("Exiting after %d seconds." % (time.time() - START), file=sys.stderr)
-        exit()
+        end()
