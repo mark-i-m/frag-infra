@@ -79,7 +79,7 @@ void kprobe__do_munmap(struct pt_regs *ctx, void *addr, size_t length) {
 
 void kprobe__sys_brk(struct pt_regs *ctx) {
     // Hard to tell the length from the system call, unfortunately...
-    do_trace(ctx, BRK | ANON, 0);
+    do_trace(ctx, BRK | ANON, 1);
 }
 """
 
@@ -144,7 +144,7 @@ def print_event(cpu, data, size):
     buffered_events.append((event.comm.decode(), event.pid, cpu,
         repr_flags(event.flags), event.order))
 
-    if len(buffered_events) % 10000 == 0:
+    if len(buffered_events) % 100000 == 0:
         for comm, pid, cpu, flags, order in buffered_events:
             print("%-12.12s %-6d %-3d %s %lu" % (comm, pid, cpu, flags, order))
         buffered_events = []
