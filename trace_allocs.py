@@ -14,8 +14,6 @@ DURATION=None
 if len(sys.argv) == 2:
     DURATION = int(sys.argv[1])
 
-START = time.time()
-
 debug = 0
 
 ALLOC_PAGES = (1 << 0)
@@ -109,7 +107,8 @@ if matched < 2:
     exit()
 
 stack_traces = b.get_table("stack_traces")
-start_ts = time.time()
+START = time.time()
+buffered_events = []
 
 # header
 print("%-18s %-12s %-6s %-3s %s" %
@@ -134,8 +133,6 @@ def repr_flags(flags):
 
     return s
 
-buffered_events = []
-
 def print_event(cpu, data, size):
     global buffered_events
 
@@ -149,16 +146,10 @@ def print_event(cpu, data, size):
             print("%-12.12s %-6d %-3d %s %lu" % (comm, pid, cpu, flags, order))
         buffered_events = []
 
-    #ts = time.time() - start_ts
-    #print("%-18.9f %-12.12s %-6d %-3d %s %lu" %
-    #      (ts, event.comm.decode(), event.pid, cpu, repr_flags(event.flags), event.order))
-
     # uncomment to print stack traces
     #for addr in stack_traces.walk(event.stack_id):
     #    sym = b.ksym(addr, show_offset=True)
     #    print("\t%s" % sym)
-
-    #print()
 
 def end():
     global buffered_events
