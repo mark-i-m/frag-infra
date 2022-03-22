@@ -18,11 +18,11 @@ RANDMINUTE=$(( $RANDOM % 30 ))
 RANDTIME=$( date +"%m-%d-%Y-%H-%M-%S" -d "$RANDMINUTE mins" )
 
 # create the output directory
-SAMPLEDIR="$OUTPUTDIR/$HOSTNAME-$RANDTIME/"
+SAMPLEDIR="$OUTPUTDIR/$HOSTNAME/$RANDTIME/"
 mkdir -p $SAMPLEDIR
 
 # redirect output to a log
-exec 3>&1 4>&2 >"$SAMPLEDIR/$RANDTIME.log" 2>&1
+exec 3>&1 4>&2 >"$SAMPLEDIR/log" 2>&1
 
 # sleep until that minute
 date
@@ -33,28 +33,28 @@ date
 
 # sample /proc/kpageflags
 echo "Recording and compressing page flags"
-cat /proc/kpageflags | gzip > "$SAMPLEDIR/$RANDTIME.kpageflags.gz"
+cat /proc/kpageflags | gzip > "$SAMPLEDIR/kpageflags.gz"
 
 date
 
 # sample process table
 echo "Recording process table"
-ps -o rss=,vsz=,cputime=,etime=,comm= ax  | sort -n -k 1 -r > "$SAMPLEDIR/$RANDTIME.procs"
+ps -o rss=,vsz=,cputime=,etime=,comm= ax  | sort -n -k 1 -r > "$SAMPLEDIR/procs"
 
 # collect some system info
 echo "Record kernel version and hostname"
-hostname > "$SAMPLEDIR/$RANDTIME.info"
-uname -a >> "$SAMPLEDIR/$RANDTIME.info"
-/usr/sbin/dmidecode >> "$SAMPLEDIR/$RANDTIME.info"
+hostname > "$SAMPLEDIR/info"
+uname -a >> "$SAMPLEDIR/info"
+/usr/sbin/dmidecode >> "$SAMPLEDIR/info"
 
 # collect info about overall memory usage
 echo "Record /proc/meminfo"
-cat /proc/meminfo > "$SAMPLEDIR/$RANDTIME.meminfo"
+cat /proc/meminfo > "$SAMPLEDIR/meminfo"
 
 date
 
 # collect and compress a 1-minute long sample of (de)allocations
 echo "Recording BPF allocations"
-$BPFDIR/trace_allocs.py 1 | gzip > "$SAMPLEDIR/$RANDTIME.allocs.gz"
+$BPFDIR/trace_allocs.py 1 | gzip > "$SAMPLEDIR/allocs.gz"
 
 date
