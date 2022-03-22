@@ -46,9 +46,12 @@ struct data_t {
 
 BPF_STACK_TRACE(stack_traces, 1024);
 BPF_PERF_OUTPUT(events);
+BPF_ARRAY(norder0, u64, 1);
 
 static void do_trace(struct pt_regs *ctx, u8 flags, u64 order) {
+    u64 *val;
     struct data_t data = {};
+    int zero = 0;
 
     data.stack_id = stack_traces.get_stackid(ctx, 0),
     data.pid = bpf_get_current_pid_tgid();
@@ -56,7 +59,12 @@ static void do_trace(struct pt_regs *ctx, u8 flags, u64 order) {
     data.order = order;
     data.flags = flags;
 
-    events.perf_submit(ctx, &data, sizeof(data));
+    if (order == 0) {
+        val = norder0.lookup(&zero);
+        if(val) lock_xadd(val, 1);
+    } else {
+        events.perf_submit(ctx, &data, sizeof(data));
+    }
 }
 
 void kprobe____alloc_pages_nodemask(struct pt_regs *ctx, gfp_t gfp, unsigned int order) {
@@ -158,11 +166,14 @@ def end():
     for comm, pid, cpu, flags, order in buffered_events:
         print("%-12.12s %-6d %-3d %s %lu" % (comm, pid, cpu, flags, order))
 
+    # counter of 0-order events
+    print("0-order events: %d" % b["norder0"][ct.c_int(0)].value)
+
     # exit
     print("Exiting after %d seconds." % (time.time() - START), file=sys.stderr)
     exit()
 
-b["events"].open_perf_buffer(print_event, page_cnt=512)
+b["events"].open_perf_buffer(print_event, page_cnt=32)
 while 1:
     try:
         b.kprobe_poll()
