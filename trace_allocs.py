@@ -173,7 +173,7 @@ def end():
     print("Exiting after %d seconds." % (time.time() - START), file=sys.stderr)
     exit()
 
-b["events"].open_perf_buffer(print_event, page_cnt=32)
+b["events"].open_perf_buffer(print_event, page_cnt=64)
 while 1:
     try:
         b.kprobe_poll()
