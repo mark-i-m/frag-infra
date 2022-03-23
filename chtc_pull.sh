@@ -29,6 +29,13 @@ for path in $SAMPLES ; do
   echo "==================================================="
   echo "Copying: $path"
 
+  # Leave in-progress snapshots untouched...
+  NFILES=$(exec_remote 'ls '"${REMOTEPATH}/${REMOTEHOSTNAME}/${path}" | wc -l)
+  if [ ! "$NFILES" = "6" ] ; then
+    echo "Snapshot $path is incomplete: $NFILES files"
+    continue
+  fi
+
   # copy file
   rsync -avzP "${USER}@${HOST}:${REMOTEPATH}/${REMOTEHOSTNAME}/${path}" "$OUTPUT/${REMOTEHOSTNAME}/"
 
@@ -48,5 +55,5 @@ for path in $SAMPLES ; do
   fi
 
   # rm file on remote
-  #exec_remote 'rm -r '"${REMOTEPATH}/${REMOTEHOSTNAME}/${path}"
+  exec_remote 'rm -r '"${REMOTEPATH}/${REMOTEHOSTNAME}/${path}"
 done
