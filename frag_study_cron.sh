@@ -58,3 +58,9 @@ echo "Recording BPF allocations"
 $BPFDIR/trace_allocs.py 1 | gzip > "$SAMPLEDIR/allocs.gz"
 
 date
+
+# chown files if on condor.
+echo "Changing owner from root..."
+if [[ `hostname` = *"chtc.wisc.edu" ]] ; then
+  chown -R mmansi "$OUTPUTDIR/$HOSTNAME/"
+fi
