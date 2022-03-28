@@ -53,6 +53,12 @@ cat /proc/meminfo > "$SAMPLEDIR/meminfo"
 
 date
 
+# collect info about uptime
+echo "Record uptime"
+uptime > "$SAMPLEDIR/uptime"
+
+date
+
 # collect and compress a 1-minute long sample of (de)allocations
 echo "Recording BPF allocations"
 $BPFDIR/trace_allocs.py 1 | gzip > "$SAMPLEDIR/allocs.gz"
