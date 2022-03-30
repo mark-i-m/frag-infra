@@ -31,7 +31,7 @@ for path in $SAMPLES ; do
 
   # Leave in-progress snapshots untouched...
   NFILES=$(exec_remote 'ls '"${REMOTEPATH}/${REMOTEHOSTNAME}/${path}" | wc -l)
-  if [ ! "$NFILES" = "6" ] ; then
+  if [ ! "$NFILES" = "7" ] ; then
     echo "Snapshot $path is incomplete: $NFILES files"
     continue
   fi
